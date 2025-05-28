@@ -1,44 +1,190 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Inicio - Práctica de Oratoria</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login/Registration Slider</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+    * { box-sizing: border-box; font-family: "Poppins", sans-serif; }
+    body {
+      display: flex; justify-content: center; align-items: center;
+      background-color: rgb(36, 153, 36); height: 100vh; margin: 0;
+    }
+    .notification {
+      position: fixed; top: 20px; right: 20px;
+      padding: 15px 25px; border-radius: 8px;
+      animation: slideIn 0.5s ease-out; z-index: 1000;
+    }
+    .notification.success { background-color: #43af43; color: white; }
+    .notification.error { background-color: #d63031; color: white; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    .imagen-encima {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%); width: 300px;
+    }
+    h1 { font-weight: 700; margin-bottom: 15px; }
+    .container {
+      background-color: #fff; border-radius: 20px;
+      box-shadow: 0 14px 28px rgba(16, 64, 74, 0.5), 0 10px 10px rgba(0, 0, 0, 0.22);
+      position: relative; overflow: hidden;
+      width: 768px; max-width: 100%; min-height: 480px;
+    }
+    form {
+      background-color: #fff; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 0 50px; height: 100%; text-align: center;
+    }
+    input {
+      background-color: #eee; border: none;
+      border-radius: 10px; padding: 12px 15px;
+      margin: 8px 0; width: 100%;
+    }
+    button {
+      border-radius: 20px; border: 1px solid #21a107;
+      background-color: #21a107; color: #fff;
+      font-size: 14px; font-weight: bold;
+      padding: 12px 45px; letter-spacing: 1px;
+      text-transform: capitalize; transition: transform 0.3s ease-in-out;
+      cursor: pointer;
+    }
+    button:hover { transform: scale(1.05); }
+    button.ghost { background-color: transparent; border-color: #fff; }
+    .form-container { position: absolute; top: 0; height: 100%; transition: all 0.6s ease-in-out; }
+    .login-container { left: 0; width: 50%; z-index: 2; }
+    .register-container { left: 0; width: 50%; opacity: 0; z-index: 1; }
+    .container.right-panel-active .login-container { transform: translateX(100%); }
+    .container.right-panel-active .register-container {
+      transform: translateX(100%); opacity: 1; z-index: 5; animation: show 0.6s;
+    }
+    @keyframes show {
+      0%, 49.99% {opacity: 0; z-index: 1;}
+      50%, 100% {opacity: 1; z-index: 5;}
+    }
+    .overlay-container {
+      position: absolute; top: 0; left: 50%;
+      width: 50%; height: 100%;
+      overflow: hidden; transition: transform 0.6s ease-in-out; z-index: 100;
+    }
+    .container.right-panel-active .overlay-container { transform: translateX(-100%); }
+    .overlay {
+      background: linear-gradient(to right, #43af43, #157e23);
+      background-size: cover; background-repeat: no-repeat;
+      background-position: center; color: #fff;
+      position: relative; left: -100%; height: 100%; width: 200%;
+      transform: translateX(0); transition: transform 0.6s ease-in-out;
+    }
+    .container.right-panel-active .overlay { transform: translateX(50%); }
+    .overlay-panel {
+      position: absolute; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 0 40px; text-align: center;
+      top: 0; height: 100%; width: 50%;
+      transform: translateX(0); transition: transform 0.6s ease-in-out;
+    }
+    .overlay-left { transform: translateX(-20%); }
+    .container.right-panel-active .overlay-left { transform: translateX(0); }
+    .overlay-right { right: 0; transform: translateX(0); }
+    .container.right-panel-active .overlay-right { transform: translateX(20%); }
+    .pass-link { font-size: 12px; margin-top: 10px; }
+  </style>
 </head>
 <body>
-  <div class="container mt-5">
-    <div class="card p-4 shadow-lg glass">
-      <h2 class="mb-4 text-center">🎤 Práctica para Hablar en Público</h2>
-      <div class="mb-3">
-        <label for="nombre" class="form-label">Nombre del Alumno</label>
-        <input type="text" class="form-control" id="nombre">
+  <div id="notification"></div>
+  <img src="logotipo.png" alt="Logotipo" class="imagen-encima">
+  <div class="container" id="container">
+    <!-- REGISTRO -->
+    <div class="form-container register-container">
+      <form id="registro-form">
+        <h1>Crear Cuenta</h1>
+        <span>Usa tu Gmail para registrarte</span>
+        <input type="text" placeholder="Name" name="name" required />
+        <input type="email" placeholder="Email" name="email" required />
+        <input type="password" placeholder="Password" name="password" required />
+        <button type="submit">Registrarse</button>
+      </form>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="form-container login-container">
+      <form id="login-form">
+        <h1>Inicio de Sesión</h1>
+        <span>Usa tu Gmail para ingresar</span>
+        <input type="email" placeholder="Email" name="email" required />
+        <input type="password" placeholder="Password" name="password" required />
+        <button type="submit">Iniciar Sesión</button>
+      </form>
+    </div>
+
+    <div class="overlay-container">
+      <div class="overlay">
+        <div class="overlay-panel overlay-left">
+          <h1>¡Bienvenido!</h1>
+          <p>Para permanecer conectado, por favor inicia sesión con tu información</p>
+          <button class="ghost" id="signIn">Iniciar Sesión</button>
+        </div>
+        <div class="overlay-panel overlay-right">
+          <h1>Hola de nuevo</h1>
+          <p>Ingresa tus datos y comienza tu práctica con nosotros</p>
+          <button class="ghost" id="signUp">Registrar</button>
+        </div>
       </div>
-      <div class="mb-3">
-        <label for="carrera" class="form-label">Carrera</label>
-        <input type="text" class="form-control" id="carrera">
-      </div>
-      <div class="mb-3">
-        <label for="seccion" class="form-label">Sección</label>
-        <input type="text" class="form-control" id="seccion">
-      </div>
-      <button class="btn btn-primary w-100" onclick="iniciarPractica()">Comenzar</button>
     </div>
   </div>
+
   <script>
-    function iniciarPractica() {
-      const nombre = document.getElementById("nombre").value.trim();
-      const carrera = document.getElementById("carrera").value.trim();
-      const seccion = document.getElementById("seccion").value.trim();
-      if (nombre && carrera && seccion) {
-        localStorage.setItem("nombre", nombre);
-        localStorage.setItem("carrera", carrera);
-        localStorage.setItem("seccion", seccion);
-        window.location.href = "practica.html";
-      } else {
-        alert("Por favor complete todos los campos.");
-      }
+    function showNotification(message, type = 'success') {
+      const notificationDiv = document.getElementById('notification');
+      while (notificationDiv.firstChild) notificationDiv.removeChild(notificationDiv.firstChild);
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.textContent = message;
+      notification.style.animation = 'slideIn 0.5s ease-out forwards';
+      notificationDiv.appendChild(notification);
+      setTimeout(() => {
+        notification.style.animation = 'slideOut 0.5s ease-out forwards';
+        setTimeout(() => { notificationDiv.removeChild(notification); }, 500);
+      }, 3000);
     }
+
+    document.getElementById('registro-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      fetch('registro.php', {
+        method: 'POST',
+        body: formData
+      }).then(res => res.text()).then(res => {
+        if (res === 'success') showNotification('¡Registro exitoso!');
+        else showNotification('Error al registrar', 'error');
+      });
+    });
+
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      fetch('login.php', {
+        method: 'POST',
+        body: formData
+      }).then(res => res.text()).then(res => {
+        if (res === 'success') {
+          showNotification('¡Inicio de sesión exitoso!', 'success');
+          setTimeout(() => { window.location.href = 'otp.html'; }, 1000);
+        } else if (res === 'invalid') {
+          showNotification('Contraseña incorrecta', 'error');
+        } else if (res === 'notfound') {
+          showNotification('Correo no registrado', 'error');
+        } else {
+          showNotification('Error desconocido', 'error');
+        }
+      }).catch(() => {
+        showNotification('Error al conectarse al servidor', 'error');
+      });
+    });
+
+    const container = document.getElementById('container');
+    document.getElementById('signUp').addEventListener('click', () => container.classList.add("right-panel-active"));
+    document.getElementById('signIn').addEventListener('click', () => container.classList.remove("right-panel-active"));
   </script>
 </body>
 </html>
