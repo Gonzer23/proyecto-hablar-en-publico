@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Verificación</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background: #f0f2f5;
+    }
+    .card {
+      border: none;
+      border-radius: 12px;
+    }
+    .btn-primary, .btn-success {
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-5 col-lg-4">
+      <div class="card p-4 shadow">
+        <h3 class="text-center mb-4">🔐 Verificación</h3>
+
+        <!-- Botón para enviar el código -->
+        <form id="formEnviarCodigo">
+          <button type="submit" class="btn btn-primary w-100 mb-3">Enviar código</button>
+        </form>
+
+        <!-- Formulario para verificar el código -->
+        <form id="formVerificarCodigo" class="d-none">
+          <div class="mb-3">
+            <label for="otp" class="form-label">Código de Verificación</label>
+            <input type="text" class="form-control text-center" id="otp" name="otp" maxlength="6" placeholder="Ingresa el código" required />
+          </div>
+          <button type="submit" class="btn btn-success w-100">Verificar</button>
+        </form>
+
+        <!-- Mensaje de respuesta -->
+        <div id="mensaje" class="mt-3 text-center"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const formEnviarCodigo = document.getElementById('formEnviarCodigo');
+  const formVerificarCodigo = document.getElementById('formVerificarCodigo');
+  const mensajeDiv = document.getElementById('mensaje');
+
+  formEnviarCodigo.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    mensajeDiv.textContent = '';
+
+    try {
+      const response = await fetch('enviar_otp.php'); // Envía código al correo de sesión
+      const result = await response.text();
+
+      if (result === 'success') {
+        mensajeDiv.textContent = 'Código enviado a tu correo.';
+        mensajeDiv.className = 'text-success mt-3';
+        formEnviarCodigo.classList.add('d-none');
+        formVerificarCodigo.classList.remove('d-none');
+      } else if (result === 'noemail') {
+        mensajeDiv.textContent = 'No hay sesión activa.';
+        mensajeDiv.className = 'text-danger mt-3';
+      } else {
+        mensajeDiv.textContent = 'Error al enviar el código.';
+        mensajeDiv.className = 'text-danger mt-3';
+      }
+    } catch (error) {
+      mensajeDiv.textContent = 'Error en la conexión.';
+      mensajeDiv.className = 'text-danger mt-3';
+    }
+  });
+
+  formVerificarCodigo.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    mensajeDiv.textContent = '';
+
+    const otp = document.getElementById('otp').value.trim();
+
+    if (!otp || otp.length !== 6) {
+      mensajeDiv.textContent = 'Ingresa un código válido de 6 dígitos.';
+      mensajeDiv.className = 'text-danger mt-3';
+      return;
+    }
+
+    try {
+      const response = await fetch('verificar_otp.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `otp=${encodeURIComponent(otp)}`
+      });
+
+      const result = await response.text();
+
+      if (result === 'valid') {
+        mensajeDiv.textContent = '✅ Código verificado con éxito. Redirigiendo...';
+        mensajeDiv.className = 'text-success mt-3';
+        setTimeout(() => {
+          window.location.href = 'index.html'; // Cambia aquí si tu página tiene otro nombre
+        }, 1500);
+      } else {
+        mensajeDiv.textContent = '❌ Código incorrecto.';
+        mensajeDiv.className = 'text-danger mt-3';
+      }
+    } catch (error) {
+      mensajeDiv.textContent = 'Error en la conexión.';
+      mensajeDiv.className = 'text-danger mt-3';
+    }
+  });
+</script>
+
+</body>
+</html>

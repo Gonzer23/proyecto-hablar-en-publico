@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Práctica de Oratoria</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container py-4">
+    <h2 class="text-center mb-4">🎙️ Práctica</h2>
+    <div class="row mb-3">
+      <div class="col">
+        <input type="number" class="form-control" id="horas" placeholder="Horas" min="0">
+      </div>
+      <div class="col">
+        <input type="number" class="form-control" id="minutos" placeholder="Minutos" min="0">
+      </div>
+      <div class="col">
+        <input type="number" class="form-control" id="segundos" placeholder="Segundos" min="0">
+      </div>
+    </div>
+    <button class="btn btn-success w-100 mb-3" onclick="comenzarGrabacion()">🎬 Comenzar Grabación</button>
+    <div class="text-center fs-4 mb-3" id="reloj">00:00:00</div>
+    <textarea class="form-control mb-3" rows="6" id="transcripcion" placeholder="Transcripción en vivo..."></textarea>
+    <button class="btn btn-primary w-100 mb-3" onclick="generarPDF()">📄 Generar PDF</button>
+    <div class="mt-4 d-flex justify-content-between">
+      <button id="btnRepetir" class="btn btn-warning">🔁 Volver a practicar</button>
+      <button id="btnNuevo" class="btn btn-danger">👤 Nuevo Alumno</button>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
